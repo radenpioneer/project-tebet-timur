@@ -21,6 +21,7 @@ type Vote = {
 	cadreLevel: string;
 	leadershipPosition: string;
 };
+type PollResult = Vote & { pwName: string; pdName: string; voteCount: number };
 
 const cadreLevels = ["AB1", "AB2", "AB3"];
 const leadershipPositions = [
@@ -55,6 +56,12 @@ function App() {
 	const [notice, setNotice] = useState("");
 	const [submitting, setSubmitting] = useState(false);
 	const [editTokenReady, setEditTokenReady] = useState(false);
+	const [pollClosed, setPollClosed] = useState(false);
+	const [results, setResults] = useState<PollResult[]>([]);
+	const [resultPds, setResultPds] = useState<Organization[]>([]);
+	const [resultsLoaded, setResultsLoaded] = useState(false);
+	const [resultFilters, setResultFilters] = useState<Record<string, string>>({});
+	const [reloadResults, setReloadResults] = useState(0);
 	const [reloadPws, setReloadPws] = useState(0);
 	const [reloadPds, setReloadPds] = useState(0);
 
@@ -88,8 +95,9 @@ function App() {
 	useEffect(() => {
 		const controller = new AbortController();
 	void fetch("/api/suara", { signal: controller.signal })
-			.then((response) => response.json() as Promise<{ vote: Vote | null }>)
+			.then((response) => response.json() as Promise<{ vote: Vote | null; closed: boolean }>)
 			.then((result) => {
+				setPollClosed(result.closed);
 				if (!result?.vote) return;
 				setCandidateId(result.vote.candidateId);
 				setSelectedPwId(result.vote.pwId);
@@ -103,9 +111,35 @@ function App() {
 		return () => controller.abort();
 	}, []);
 
+	useEffect(() => {
+		const controller = new AbortController();
+		const refresh = () => fetch("/api/hasil", { signal: controller.signal })
+			.then((response) => response.json() as Promise<{ closed: boolean; results: PollResult[] }>)
+			.then((result) => {
+				setResults(result.results);
+				setPollClosed(result.closed);
+				setResultsLoaded(true);
+			})
+			.catch(() => { if (!controller.signal.aborted) setResultsLoaded(true); });
+		void refresh();
+		const interval = window.setInterval(() => { void refresh(); }, 30_000);
+		return () => { controller.abort(); window.clearInterval(interval); };
+	}, [reloadResults]);
+
+	useEffect(() => {
+		const pwId = resultFilters.pwId;
+		if (!pwId) { setResultPds([]); return; }
+		const controller = new AbortController();
+		void loadOrganizations(new URLSearchParams({ jenis: "pd", ancestor: pwId }), controller.signal)
+			.then(setResultPds)
+			.catch(() => { if (!controller.signal.aborted) setResultPds([]); });
+		return () => controller.abort();
+	}, [resultFilters.pwId]);
+
 	const selectedPw = pws.find((pw) => pw.id === selectedPwId);
 	const selectedPd = pds.find((pd) => pd.id === selectedPdId);
-	const canSubmit = Boolean(editTokenReady && candidateId && selectedPw && selectedPd && cadreLevel && leadershipPosition && !submitting);
+	const filteredResults = results.filter((result) => Object.entries(resultFilters).every(([key, value]) => !value || String(result[key as keyof PollResult]) === value));
+	const canSubmit = Boolean(!pollClosed && editTokenReady && candidateId && selectedPw && selectedPd && cadreLevel && leadershipPosition && !submitting);
 
 	function handlePwChange(id: string | null) {
 		setSelectedPwId(id ?? "");
@@ -132,9 +166,11 @@ function App() {
 					? result.error : "Suara belum dapat disimpan.";
 				throw new Error(message);
 			}
+			setReloadResults((count) => count + 1);
 			setNotice("Suara tersimpan. Anda dapat mengubahnya dari browser ini sampai polling ditutup.");
 		} catch (error) {
 			setVoteError(error instanceof Error ? error.message : "Suara belum dapat disimpan.");
+			if (error instanceof Error && error.message === "Polling telah ditutup.") setPollClosed(true);
 		} finally {
 			setSubmitting(false);
 		}
@@ -142,6 +178,7 @@ function App() {
 
 	return (
 		<main className="poll-page">
+			{pollClosed && <p className="poll-status" role="status">Polling telah ditutup. Suara tidak dapat dikirim atau diubah.</p>}
 			<Card className="poll-card w-full max-w-2xl" role="region" aria-labelledby="poll-title">
 				<CardHeader>
 					<p className="poll-eyebrow">Polling aspirasi nonresmi</p>
@@ -197,12 +234,48 @@ function App() {
 							</Field>
 							{voteError && <FieldError role="alert">{voteError}</FieldError>}
 							{notice && <p className="poll-status" role="status">{notice}</p>}
-							<Button type="submit" disabled={!canSubmit}>{submitting ? "Menyimpan…" : "Kirim / ubah suara"}</Button>
+							<Button type="submit" disabled={!canSubmit}>{pollClosed ? "Polling ditutup" : submitting ? "Menyimpan…" : "Kirim / ubah suara"}</Button>
 						</FieldGroup>
 					</form>
 					)}
 				</CardContent>
 			</Card>
+			<section className="poll-results" aria-labelledby="results-title">
+				<h2 id="results-title">Hasil polling</h2>
+				{!resultsLoaded ? <p role="status">Memuat hasil…</p> : (
+					<>
+						<h3>Jumlah suara per calon</h3>
+						<ul>{candidates.map((candidate) => <li key={candidate.id}>{candidate.name}: {results.filter((result) => result.candidateId === candidate.id).reduce((sum, result) => sum + result.voteCount, 0)} suara</li>)}</ul>
+						<h3>Tabulasi silang</h3>
+						<div className="poll-result-filters" aria-label="Filter tabulasi hasil">
+							{([
+								["candidateId", "Calon", candidates.map((candidate) => [candidate.id, candidate.name] as const)],
+								["pwId", "PW", pws.map((pw) => [pw.id, pw.nama] as const)],
+								["pdId", "PD", resultPds.map((pd) => [pd.id, pd.nama] as const)],
+								["cadreLevel", "Jenjang", cadreLevels.map((value) => [value, value] as const)],
+								["leadershipPosition", "Posisi kepengurusan", leadershipPositions.map((value) => [value, value] as const)],
+							] as const).map(([key, label, options]) => (
+								<Select key={key} value={resultFilters[key] || "__all__"} onValueChange={(value) => setResultFilters((filters) => ({ ...filters, [key]: value === "__all__" ? "" : value ?? "", ...(key === "pwId" ? { pdId: "" } : {}) }))}>
+									<SelectTrigger aria-label={`Filter ${label}`} disabled={key === "pdId" && !resultFilters.pwId}><SelectValue placeholder={label} /></SelectTrigger>
+									<SelectContent><SelectGroup><SelectItem value="__all__">Semua {label.toLowerCase()}</SelectItem>{options.map(([value, name]) => <SelectItem key={value} value={value}>{name}</SelectItem>)}</SelectGroup></SelectContent>
+								</Select>
+							))}
+						</div>
+						{results.length === 0 && <p role="status">Belum ada suara untuk ditampilkan.</p>}
+						{results.length > 0 && filteredResults.length === 0 && <p role="status">Tidak ada data suara untuk kombinasi ini.</p>}
+						{filteredResults.length > 0 && <>
+						<div className="poll-results-table-wrap">
+							<table>
+								<thead><tr><th>Calon</th><th>PW</th><th>PD</th><th>Jenjang</th><th>Posisi kepengurusan</th><th>Suara</th></tr></thead>
+								<tbody>{filteredResults.map((result) => <tr key={`${result.candidateId}-${result.pwId}-${result.pdId}-${result.cadreLevel}-${result.leadershipPosition}`}>
+									<td>{candidates.find((candidate) => candidate.id === result.candidateId)?.name ?? result.candidateId}</td><td>{result.pwName}</td><td>{result.pdName}</td><td>{result.cadreLevel}</td><td>{result.leadershipPosition}</td><td>{result.voteCount}</td>
+								</tr>)}</tbody>
+							</table>
+						</div>
+						</>}
+					</>
+				)}
+			</section>
 		</main>
 	);
 }

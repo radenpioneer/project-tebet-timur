@@ -111,22 +111,39 @@ app.get("/api/struktur", async (c) => {
 });
 
 app.get("/api/suara", async (c) => {
+	await closePollingIfDue(c.env);
+	const closed = await isPollingClosed(c.env);
 	const currentToken = getCookie(c.req.header("Cookie"), EDIT_COOKIE);
 	const token = currentToken ?? createToken();
 	if (!currentToken) {
-		const response = c.json({ vote: null }, 200, { "Cache-Control": "no-store" });
-		setEditCookie(response, token, c.req.url);
+		const response = c.json({ vote: null, closed }, 200, { "Cache-Control": "no-store" });
+		if (!closed) setEditCookie(response, token, c.req.url);
 		return response;
 	}
+	if (closed) return c.json({ vote: null, closed }, 200, { "Cache-Control": "no-store" });
 	const tokenHash = await hashToken(token);
 	const vote = await c.env.POLLING_DB.prepare(
 		"SELECT candidate_id AS candidateId, pw_id AS pwId, pw_name AS pwName, pd_id AS pdId, pd_name AS pdName, cadre_level AS cadreLevel, leadership_position AS leadershipPosition FROM votes WHERE token_hash = ?",
 	).bind(tokenHash).first<VoteRow>();
-	return c.json({ vote }, 200, { "Cache-Control": "no-store" });
+	return c.json({ vote, closed }, 200, { "Cache-Control": "no-store" });
+});
+
+app.get("/api/hasil", async (c) => {
+	await closePollingIfDue(c.env);
+	const closed = await isPollingClosed(c.env);
+	const results = closed
+		? await c.env.POLLING_DB.prepare(
+			"SELECT candidate_id AS candidateId, pw_id AS pwId, pw_name AS pwName, pd_id AS pdId, pd_name AS pdName, cadre_level AS cadreLevel, leadership_position AS leadershipPosition, vote_count AS voteCount FROM poll_results ORDER BY candidate_id, pw_name, pd_name, cadre_level, leadership_position",
+		).all()
+		: await c.env.POLLING_DB.prepare(
+			"SELECT candidate_id AS candidateId, pw_id AS pwId, pw_name AS pwName, pd_id AS pdId, pd_name AS pdName, cadre_level AS cadreLevel, leadership_position AS leadershipPosition, COUNT(*) AS voteCount FROM votes GROUP BY candidate_id, pw_id, pw_name, pd_id, pd_name, cadre_level, leadership_position ORDER BY candidate_id, pw_name, pd_name, cadre_level, leadership_position",
+		).all();
+	return c.json({ closed, results: results.results }, 200, { "Cache-Control": "no-store" });
 });
 
 app.post("/api/suara", async (c) => {
-	if (Date.now() > VOTE_CLOSES_AT) {
+	await closePollingIfDue(c.env);
+	if (await isPollingClosed(c.env)) {
 		return c.json({ error: "Polling telah ditutup." }, 410, { "Cache-Control": "no-store" });
 	}
 	let body: unknown;
@@ -159,14 +176,18 @@ app.post("/api/suara", async (c) => {
 	const existingToken = getCookie(c.req.header("Cookie"), EDIT_COOKIE);
 	const token = existingToken ?? createToken();
 	const tokenHash = await hashToken(token);
-	await c.env.POLLING_DB.prepare(
+	const saved = await c.env.POLLING_DB.prepare(
 		`INSERT INTO votes (token_hash, candidate_id, pw_id, pw_name, pd_id, pd_name, cadre_level, leadership_position)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		 SELECT ?, ?, ?, ?, ?, ?, ?, ?
+		 WHERE NOT EXISTS (SELECT 1 FROM poll_state WHERE id = 1) AND unixepoch('now') <= ?
 		 ON CONFLICT(token_hash) DO UPDATE SET candidate_id = excluded.candidate_id, pw_id = excluded.pw_id,
 		 pw_name = excluded.pw_name, pd_id = excluded.pd_id, pd_name = excluded.pd_name,
 		 cadre_level = excluded.cadre_level, leadership_position = excluded.leadership_position,
 		 updated_at = CURRENT_TIMESTAMP`,
-	).bind(tokenHash, candidate.id, pw.id, pw.nama, pd.id, pd.nama, body.cadreLevel, body.leadershipPosition).run();
+	).bind(tokenHash, candidate.id, pw.id, pw.nama, pd.id, pd.nama, body.cadreLevel, body.leadershipPosition, Math.floor(VOTE_CLOSES_AT / 1000)).run();
+	if (saved.meta.changes === 0) {
+		return c.json({ error: "Polling telah ditutup." }, 410, { "Cache-Control": "no-store" });
+	}
 
 	const response = c.json({ ok: true, updated: Boolean(existingToken) }, 200, { "Cache-Control": "no-store" });
 	if (!existingToken) {
@@ -183,6 +204,34 @@ function isVoteInput(value: unknown): value is VoteInput {
 		CADRE_LEVELS.includes(input.cadreLevel as (typeof CADRE_LEVELS)[number]) &&
 		LEADERSHIP_POSITIONS.includes(input.leadershipPosition as (typeof LEADERSHIP_POSITIONS)[number]);
 }
+
+async function isPollingClosed(env: RuntimeEnv) {
+	const state = await env.POLLING_DB.prepare("SELECT id FROM poll_state WHERE id = 1").first();
+	return Boolean(state);
+}
+
+async function closePollingIfDue(env: RuntimeEnv) {
+	if (Date.now() < VOTE_CLOSES_AT) return;
+	if (await isPollingClosed(env)) return;
+	const closedAt = new Date(VOTE_CLOSES_AT).toISOString();
+	await env.POLLING_DB.batch([
+		env.POLLING_DB.prepare(
+			`INSERT OR IGNORE INTO poll_results
+			 (candidate_id, pw_id, pw_name, pd_id, pd_name, cadre_level, leadership_position, vote_count)
+			 SELECT candidate_id, pw_id, pw_name, pd_id, pd_name, cadre_level, leadership_position, COUNT(*)
+			 FROM votes GROUP BY candidate_id, pw_id, pw_name, pd_id, pd_name, cadre_level, leadership_position`,
+		),
+		env.POLLING_DB.prepare("UPDATE votes SET token_hash = NULL WHERE token_hash IS NOT NULL"),
+		env.POLLING_DB.prepare("INSERT OR IGNORE INTO poll_state (id, closed_at) VALUES (1, ?)").bind(closedAt),
+	]);
+}
+
+export default {
+	fetch: app.fetch,
+	async scheduled(_controller: ScheduledController, env: RuntimeEnv) {
+		if (Date.now() >= VOTE_CLOSES_AT) await closePollingIfDue(env);
+	},
+};
 
 async function loadDirectory(env: RuntimeEnv, kind: "pw" | "pd", ancestor?: string) {
 	const url = new URL("https://directory-cache.internal/");
@@ -221,5 +270,3 @@ function setEditCookie(response: Response, token: string, requestUrl: string) {
 		`${EDIT_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=31536000${new URL(requestUrl).protocol === "https:" ? "; Secure" : ""}`,
 	);
 }
-
-export default app;

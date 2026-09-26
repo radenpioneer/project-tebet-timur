@@ -4,9 +4,13 @@
 
 **Blocked by:** 02 — Kirim dan ubah suara polling
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Hasil jumlah suara per calon dan tabulasi silang tersedia selama polling dan setelah polling ditutup.
-- [ ] Tabulasi mencakup seluruh kombinasi calon, PW, PD, jenjang, dan posisi kepengurusan.
-- [ ] Kombinasi dengan satu suara tetap menampilkan hitungannya; kombinasi tanpa suara menampilkan pesan data kosong.
-- [ ] Hasil publik tidak mengungkap token edit.
+- [x] Hasil jumlah suara per calon dan tabulasi silang tersedia selama polling dan setelah polling ditutup.
+- [x] Tabulasi mencakup seluruh kombinasi calon, PW, PD, jenjang, dan posisi kepengurusan.
+- [x] Kombinasi dengan satu suara tetap menampilkan hitungannya; kombinasi tanpa suara menampilkan pesan data kosong.
+- [x] Hasil publik tidak mengungkap token edit.
+
+## Comments
+
+- Implemented `GET /api/hasil`, live candidate totals and cross-tab filters, zero-result feedback, and persistent final aggregates. Public results include counts only and never edit tokens.
