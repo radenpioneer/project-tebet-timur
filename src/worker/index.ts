@@ -12,6 +12,7 @@ type CachedDirectory = { items: Organization[]; savedAt: number };
 type RuntimeEnv = Env & { KAMMI_API_TOKEN?: string };
 
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+const VOTE_RETENTION_DAYS = 90;
 const ORGANIZATION_API = "https://www.kammi.id/api/v1/struktur";
 const VOTE_CLOSES_AT = Date.parse("2026-10-29T16:59:59.999Z");
 const EDIT_COOKIE = "poll_edit";
@@ -212,7 +213,10 @@ async function isPollingClosed(env: RuntimeEnv) {
 
 async function closePollingIfDue(env: RuntimeEnv) {
 	if (Date.now() < VOTE_CLOSES_AT) return;
-	if (await isPollingClosed(env)) return;
+	if (await isPollingClosed(env)) {
+		await deleteExpiredVoteDetails(env);
+		return;
+	}
 	const closedAt = new Date(VOTE_CLOSES_AT).toISOString();
 	await env.POLLING_DB.batch([
 		env.POLLING_DB.prepare(
@@ -224,6 +228,17 @@ async function closePollingIfDue(env: RuntimeEnv) {
 		env.POLLING_DB.prepare("UPDATE votes SET token_hash = NULL WHERE token_hash IS NOT NULL"),
 		env.POLLING_DB.prepare("INSERT OR IGNORE INTO poll_state (id, closed_at) VALUES (1, ?)").bind(closedAt),
 	]);
+	await deleteExpiredVoteDetails(env);
+}
+
+async function deleteExpiredVoteDetails(env: RuntimeEnv) {
+	await env.POLLING_DB.prepare(
+		`DELETE FROM votes
+		 WHERE EXISTS (
+			 SELECT 1 FROM poll_state
+			 WHERE id = 1 AND julianday(closed_at) <= julianday('now', '-${VOTE_RETENTION_DAYS} days')
+		 )`,
+	).run();
 }
 
 export default {

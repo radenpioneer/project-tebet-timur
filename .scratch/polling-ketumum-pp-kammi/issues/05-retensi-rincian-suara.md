@@ -4,8 +4,8 @@
 
 **Blocked by:** 03 — Tampilkan hasil polling kepada publik; 04 — Tutup polling dan kunci perubahan suara
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Rincian suara dihapus setelah 90 hari sejak polling ditutup.
-- [ ] Hasil agregat final seluruh kombinasi dipertahankan dan tetap dapat dilihat publik setelah rincian suara dihapus.
-- [ ] Tidak ada token edit yang dipertahankan sebagai bagian dari hasil agregat final.
+- [x] Rincian suara dihapus setelah 90 hari sejak polling ditutup.
+- [x] Hasil agregat final seluruh kombinasi dipertahankan dan tetap dapat dilihat publik setelah rincian suara dihapus.
+- [x] Tidak ada token edit yang dipertahankan sebagai bagian dari hasil agregat final.
