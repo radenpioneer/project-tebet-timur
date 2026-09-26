@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-26T21:12:49Z",
+  "title": "Design System: Project Tebet Timur",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Fresh Green", "canonical": "oklch(0.841 0.238 128.85)", "tonalRamp": ["oklch(15% 0.238 128.85)", "oklch(25% 0.238 128.85)", "oklch(35% 0.238 128.85)", "oklch(45% 0.238 128.85)", "oklch(55% 0.238 128.85)", "oklch(65% 0.238 128.85)", "oklch(80% 0.238 128.85)", "oklch(95% 0.238 128.85)"] },
+      "primary-foreground": { "role": "neutral", "displayName": "Deep Green Ink", "canonical": "oklch(0.405 0.101 131.063)", "tonalRamp": ["oklch(15% 0.101 131.063)", "oklch(25% 0.101 131.063)", "oklch(35% 0.101 131.063)", "oklch(45% 0.101 131.063)", "oklch(55% 0.101 131.063)", "oklch(65% 0.101 131.063)", "oklch(80% 0.101 131.063)", "oklch(95% 0.101 131.063)"] },
+      "background": { "role": "neutral", "displayName": "Open Paper", "canonical": "oklch(1 0 0)", "tonalRamp": ["oklch(15% 0 0)", "oklch(25% 0 0)", "oklch(35% 0 0)", "oklch(45% 0 0)", "oklch(55% 0 0)", "oklch(65% 0 0)", "oklch(80% 0 0)", "oklch(95% 0 0)"] },
+      "foreground": { "role": "neutral", "displayName": "Quiet Ink", "canonical": "oklch(0.153 0.006 107.1)", "tonalRamp": ["oklch(15% 0.006 107.1)", "oklch(25% 0.006 107.1)", "oklch(35% 0.006 107.1)", "oklch(45% 0.006 107.1)", "oklch(55% 0.006 107.1)", "oklch(65% 0.006 107.1)", "oklch(80% 0.006 107.1)", "oklch(95% 0.006 107.1)"] },
+      "secondary": { "role": "secondary", "displayName": "Soft Gray", "canonical": "oklch(0.967 0.001 286.375)", "tonalRamp": ["oklch(15% 0.001 286.375)", "oklch(25% 0.001 286.375)", "oklch(35% 0.001 286.375)", "oklch(45% 0.001 286.375)", "oklch(55% 0.001 286.375)", "oklch(65% 0.001 286.375)", "oklch(80% 0.001 286.375)", "oklch(95% 0.001 286.375)"] },
+      "muted": { "role": "neutral", "displayName": "Warm Mist", "canonical": "oklch(0.966 0.005 106.5)", "tonalRamp": ["oklch(15% 0.005 106.5)", "oklch(25% 0.005 106.5)", "oklch(35% 0.005 106.5)", "oklch(45% 0.005 106.5)", "oklch(55% 0.005 106.5)", "oklch(65% 0.005 106.5)", "oklch(80% 0.005 106.5)", "oklch(95% 0.005 106.5)"] },
+      "muted-foreground": { "role": "neutral", "displayName": "Stone Text", "canonical": "oklch(0.58 0.031 107.3)", "tonalRamp": ["oklch(15% 0.031 107.3)", "oklch(25% 0.031 107.3)", "oklch(35% 0.031 107.3)", "oklch(45% 0.031 107.3)", "oklch(55% 0.031 107.3)", "oklch(65% 0.031 107.3)", "oklch(80% 0.031 107.3)", "oklch(95% 0.031 107.3)"] },
+      "border": { "role": "neutral", "displayName": "Fine Border", "canonical": "oklch(0.93 0.007 106.5)", "tonalRamp": ["oklch(15% 0.007 106.5)", "oklch(25% 0.007 106.5)", "oklch(35% 0.007 106.5)", "oklch(45% 0.007 106.5)", "oklch(55% 0.007 106.5)", "oklch(65% 0.007 106.5)", "oklch(80% 0.007 106.5)", "oklch(95% 0.007 106.5)"] },
+      "destructive": { "role": "tertiary", "displayName": "Clear Error Red", "canonical": "oklch(0.577 0.245 27.325)", "tonalRamp": ["oklch(15% 0.245 27.325)", "oklch(25% 0.245 27.325)", "oklch(35% 0.245 27.325)", "oklch(45% 0.245 27.325)", "oklch(55% 0.245 27.325)", "oklch(65% 0.245 27.325)", "oklch(80% 0.245 27.325)", "oklch(95% 0.245 27.325)"] },
+      "popover": { "role": "neutral", "displayName": "Floating Paper", "canonical": "oklch(1 0 0)", "tonalRamp": ["oklch(15% 0 0)", "oklch(25% 0 0)", "oklch(35% 0 0)", "oklch(45% 0 0)", "oklch(55% 0 0)", "oklch(65% 0 0)", "oklch(80% 0 0)", "oklch(95% 0 0)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The polling title; scales with the viewport." },
+      "body": { "displayName": "Body", "purpose": "Descriptions, status messages, and result content." }
+    },
+    "shadows": [
+      { "name": "menu-lift", "value": "0 25px 50px -12px rgb(0 0 0 / 0.25)", "purpose": "Separate open select menus from the form." }
+    ],
+    "motion": [
+      { "name": "control-transition", "value": "transition-colors", "purpose": "Subtle color changes on button and select states." },
+      { "name": "menu-transition", "value": "100ms", "purpose": "Short fade and scale transition when select menus open or close." }
+    ],
+    "breakpoints": [
+      { "name": "filter-min-column", "value": "12rem", "purpose": "Minimum width for an auto-fitting result filter column." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main poll action, pill-shaped and visibly focused for keyboard use.",
+      "html": "<button class=\"ds-button-primary\">Kirim / ubah suara</button>",
+      "css": ".ds-button-primary { background: var(--primary); color: var(--primary-foreground); border: 1px solid transparent; border-radius: 9999px; height: 36px; padding: 0 12px; font: 500 14px/1 'Geist Variable', sans-serif; transition: background-color 150ms ease; } .ds-button-primary:hover { background: color-mix(in oklab, var(--primary) 80%, transparent); } .ds-button-primary:focus-visible { outline: 3px solid color-mix(in oklab, var(--ring) 50%, transparent); outline-offset: 2px; } .ds-button-primary:active { transform: translateY(1px); } .ds-button-primary:disabled { opacity: .5; }"
+    },
+    {
+      "name": "Poll Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Quiet container for the poll form and its explanatory copy.",
+      "html": "<section class=\"ds-card\"><h2>Polling Calon Ketua Umum PP KAMMI</h2><p>Pilih calon dan lengkapi asal organisasi Anda.</p></section>",
+      "css": ".ds-card { background: var(--card); color: var(--card-foreground); border-radius: 16px; padding: 24px; box-shadow: 0 0 0 1px color-mix(in oklab, var(--foreground) 10%, transparent); }"
+    },
+    {
+      "name": "Select Trigger",
+      "kind": "input",
+      "refersTo": "select-trigger",
+      "description": "Pill-shaped field trigger with a visible focus halo.",
+      "html": "<button class=\"ds-select-trigger\" aria-haspopup=\"listbox\">Pilih calon <span aria-hidden=\"true\">⌄</span></button>",
+      "css": ".ds-select-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; height: 36px; padding: 0 12px; border: 1px solid var(--input); border-radius: 9999px; background: color-mix(in oklab, var(--input) 30%, transparent); color: var(--foreground); font: 400 14px 'Geist Variable', sans-serif; } .ds-select-trigger:focus-visible { border-color: var(--ring); outline: 3px solid color-mix(in oklab, var(--ring) 50%, transparent); outline-offset: 1px; } .ds-select-trigger:disabled { opacity: .5; }"
+    },
+    {
+      "name": "Select Menu",
+      "kind": "custom",
+      "description": "Floating option surface with soft lift and rounded rows.",
+      "html": "<div class=\"ds-select-menu\" role=\"listbox\"><div class=\"ds-select-option\" role=\"option\" aria-selected=\"true\">Calon pilihan</div><div class=\"ds-select-option\" role=\"option\">Calon lainnya</div></div>",
+      "css": ".ds-select-menu { padding: 4px; border-radius: 16px; background: var(--popover); color: var(--popover-foreground); box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%), 0 0 0 1px rgb(0 0 0 / 5%); } .ds-select-option { padding: 8px 12px; border-radius: 12px; font: 400 14px 'Geist Variable', sans-serif; } .ds-select-option[aria-selected=true], .ds-select-option:hover { background: var(--accent); color: var(--accent-foreground); }"
+    },
+    {
+      "name": "Results Table",
+      "kind": "custom",
+      "description": "Plain, scannable cross-tabulation that scrolls instead of squeezing columns.",
+      "html": "<div class=\"ds-table-wrap\"><table class=\"ds-table\"><thead><tr><th>Calon</th><th>Asal PW</th><th>Suara</th></tr></thead><tbody><tr><td>Nama calon</td><td>Nama wilayah</td><td>12</td></tr></tbody></table></div>",
+      "css": ".ds-table-wrap { overflow-x: auto; } .ds-table { width: 100%; border-collapse: collapse; text-align: left; font: 400 14px/1.5 'Geist Variable', sans-serif; } .ds-table th, .ds-table td { padding: 12px; border-bottom: 1px solid var(--border); white-space: nowrap; } .ds-table th { color: var(--muted-foreground); font-weight: 500; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Open Forum Signal",
+    "overview": "The interface should feel like a clear public notice from a community: open, practical, and easy to act on. Fresh green gives the central action an optimistic signal, while quiet gray neutrals keep the vote form and detailed results legible. The mood is warm and community-minded without borrowing the gloss or spectacle of a campaign identity.\n\nThe current page places a focused response card ahead of a broader results area. Its controls are soft and tactile, with rounded silhouettes; the card remains calm and the select menu gains the strongest lift when it opens. Preserve this balance across future screens: direct information first, friendly interaction second.",
+    "keyCharacteristics": ["Public and direct, with community warmth", "Fresh green used as a functional signal", "Quiet, slightly warm neutrals for reading and structure", "Softly rounded controls and restrained surface depth"],
+    "rules": [
+      { "name": "The Signal Color Rule", "body": "Use green to identify the action or selected state; let neutral surfaces carry the reading load.", "section": "colors" },
+      { "name": "The Plain-Language Type Rule", "body": "Use hierarchy and weight to organize information; keep labels readable and avoid ornamental display typography.", "section": "typography" },
+      { "name": "The Menu Lift Rule", "body": "Keep resting surfaces quiet; use stronger elevation only for overlays that need to sit above the page.", "section": "elevation" }
+    ],
+    "dos": ["Do use semantic theme tokens so light and dark modes stay aligned.", "Do keep the poll action visually clear and the supporting privacy/context copy easy to read.", "Do preserve the wide results region and horizontal table overflow behavior.", "Do use a visible focus treatment for keyboard-operated controls."],
+    "donts": ["Don't turn the interface into a corporate campaign identity or add campaign-style spectacle.", "Don't use the primary green as a large decorative background when it weakens text contrast or action hierarchy.", "Don't apply the open-menu shadow to every resting card or control.", "Don't compress result columns until values become difficult to scan; allow horizontal scrolling instead."]
+  }
+}

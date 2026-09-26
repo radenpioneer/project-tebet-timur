@@ -1,6 +1,8 @@
 # Project Tebet Timur
 
-React, TypeScript, Vite, Hono, and Cloudflare Workers. The application currently renders an empty canvas; product UI has not been implemented.
+A nonofficial PP KAMMI chairperson aspiration poll. Participants can submit and revise a response from the same browser, and the public can view candidate totals and filterable cross-tabulations. The poll does not verify identity or eligibility and is not an official election.
+
+Built with React, TypeScript, Vite, Hono, and Cloudflare Workers.
 
 ## Local development
 
