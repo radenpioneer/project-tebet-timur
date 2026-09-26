@@ -100,8 +100,8 @@ function App() {
 			<Card className="poll-card w-full max-w-2xl" role="region" aria-labelledby="poll-title">
 				<CardHeader>
 					<p className="poll-eyebrow">Polling aspirasi</p>
-					<CardTitle id="poll-title" className="poll-title">
-						Asal PW dan PD
+					<CardTitle className="poll-title">
+						<h1 id="poll-title">Asal PW dan PD</h1>
 					</CardTitle>
 					<CardDescription>
 						Pilih wilayah dan daerah tempat Anda berasal. Pilihan ini akan disimpan bersama suara Anda.

@@ -158,6 +158,12 @@
 	letter-spacing: -0.04em;
 }
 
+.poll-title h1 {
+	margin: 0;
+	font: inherit;
+	letter-spacing: inherit;
+}
+
 .poll-status {
 	margin: 0;
 	font-size: 0.875rem;
