@@ -1,0 +1,3 @@
+# Token anonim untuk suara yang dapat diubah
+
+Polling menerima siapa pun yang memiliki tautan dan tidak meminta identitas peserta, tetapi pemilik browser boleh mengubah suaranya. Karena itu setiap browser menerima token acak dalam cookie `HttpOnly`, sementara database menyimpan hash token untuk menemukan suara terkait; pembatasan ini berlaku per browser dan dapat dihindari dengan menghapus data browser atau memakai perangkat lain. Rincian suara dibuka dalam tabulasi publik meski jumlahnya satu, jadi hasil dapat memungkinkan inferensi individu. Hash dihapus saat polling ditutup, jawaban terperinci dihapus 90 hari setelah penutupan, dan agregat final dipertahankan agar hasil tetap tersedia.

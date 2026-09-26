@@ -1,0 +1,294 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-26T23:09:47Z",
+  "title": "Design System: Project Tebet Timur",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Fresh Green",
+        "canonical": "oklch(0.841 0.238 128.85)",
+        "tonalRamp": [
+          "oklch(15% 0.238 128.85)",
+          "oklch(25% 0.238 128.85)",
+          "oklch(35% 0.238 128.85)",
+          "oklch(45% 0.238 128.85)",
+          "oklch(55% 0.238 128.85)",
+          "oklch(65% 0.238 128.85)",
+          "oklch(80% 0.238 128.85)",
+          "oklch(95% 0.238 128.85)"
+        ]
+      },
+      "primary-foreground": {
+        "role": "neutral",
+        "displayName": "Deep Green Ink",
+        "canonical": "oklch(0.405 0.101 131.063)",
+        "tonalRamp": [
+          "oklch(15% 0.101 131.063)",
+          "oklch(25% 0.101 131.063)",
+          "oklch(35% 0.101 131.063)",
+          "oklch(45% 0.101 131.063)",
+          "oklch(55% 0.101 131.063)",
+          "oklch(65% 0.101 131.063)",
+          "oklch(80% 0.101 131.063)",
+          "oklch(95% 0.101 131.063)"
+        ]
+      },
+      "background": {
+        "role": "neutral",
+        "displayName": "Open Paper",
+        "canonical": "oklch(1 0 0)",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(25% 0 0)",
+          "oklch(35% 0 0)",
+          "oklch(45% 0 0)",
+          "oklch(55% 0 0)",
+          "oklch(65% 0 0)",
+          "oklch(80% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Quiet Ink",
+        "canonical": "oklch(0.153 0.006 107.1)",
+        "tonalRamp": [
+          "oklch(15% 0.006 107.1)",
+          "oklch(25% 0.006 107.1)",
+          "oklch(35% 0.006 107.1)",
+          "oklch(45% 0.006 107.1)",
+          "oklch(55% 0.006 107.1)",
+          "oklch(65% 0.006 107.1)",
+          "oklch(80% 0.006 107.1)",
+          "oklch(95% 0.006 107.1)"
+        ]
+      },
+      "secondary": {
+        "role": "secondary",
+        "displayName": "Soft Gray",
+        "canonical": "oklch(0.967 0.001 286.375)",
+        "tonalRamp": [
+          "oklch(15% 0.001 286.375)",
+          "oklch(25% 0.001 286.375)",
+          "oklch(35% 0.001 286.375)",
+          "oklch(45% 0.001 286.375)",
+          "oklch(55% 0.001 286.375)",
+          "oklch(65% 0.001 286.375)",
+          "oklch(80% 0.001 286.375)",
+          "oklch(95% 0.001 286.375)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Warm Mist",
+        "canonical": "oklch(0.966 0.005 106.5)",
+        "tonalRamp": [
+          "oklch(15% 0.005 106.5)",
+          "oklch(25% 0.005 106.5)",
+          "oklch(35% 0.005 106.5)",
+          "oklch(45% 0.005 106.5)",
+          "oklch(55% 0.005 106.5)",
+          "oklch(65% 0.005 106.5)",
+          "oklch(80% 0.005 106.5)",
+          "oklch(95% 0.005 106.5)"
+        ]
+      },
+      "muted-foreground": {
+        "role": "neutral",
+        "displayName": "Stone Text",
+        "canonical": "oklch(0.58 0.031 107.3)",
+        "tonalRamp": [
+          "oklch(15% 0.031 107.3)",
+          "oklch(25% 0.031 107.3)",
+          "oklch(35% 0.031 107.3)",
+          "oklch(45% 0.031 107.3)",
+          "oklch(55% 0.031 107.3)",
+          "oklch(65% 0.031 107.3)",
+          "oklch(80% 0.031 107.3)",
+          "oklch(95% 0.031 107.3)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Fine Border",
+        "canonical": "oklch(0.93 0.007 106.5)",
+        "tonalRamp": [
+          "oklch(15% 0.007 106.5)",
+          "oklch(25% 0.007 106.5)",
+          "oklch(35% 0.007 106.5)",
+          "oklch(45% 0.007 106.5)",
+          "oklch(55% 0.007 106.5)",
+          "oklch(65% 0.007 106.5)",
+          "oklch(80% 0.007 106.5)",
+          "oklch(95% 0.007 106.5)"
+        ]
+      },
+      "destructive": {
+        "role": "tertiary",
+        "displayName": "Clear Error Red",
+        "canonical": "oklch(0.577 0.245 27.325)",
+        "tonalRamp": [
+          "oklch(15% 0.245 27.325)",
+          "oklch(25% 0.245 27.325)",
+          "oklch(35% 0.245 27.325)",
+          "oklch(45% 0.245 27.325)",
+          "oklch(55% 0.245 27.325)",
+          "oklch(65% 0.245 27.325)",
+          "oklch(80% 0.245 27.325)",
+          "oklch(95% 0.245 27.325)"
+        ]
+      },
+      "popover": {
+        "role": "neutral",
+        "displayName": "Floating Paper",
+        "canonical": "oklch(1 0 0)",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(25% 0 0)",
+          "oklch(35% 0 0)",
+          "oklch(45% 0 0)",
+          "oklch(55% 0 0)",
+          "oklch(65% 0 0)",
+          "oklch(80% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Candidate and results page titles; scales with the viewport."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Descriptions, status messages, and result content."
+      }
+    },
+    "shadows": [
+      {
+        "name": "menu-lift",
+        "value": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+        "purpose": "Separate open select menus from the form."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-transition",
+        "value": "transition-colors",
+        "purpose": "Subtle color changes on button and select states."
+      },
+      {
+        "name": "menu-transition",
+        "value": "100ms",
+        "purpose": "Short fade and scale transition when select menus open or close."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile-sheet-and-cards",
+        "value": "768px",
+        "purpose": "Candidate cards become wider for touch; sheets rise from the bottom. Card rows scroll horizontally at every width."
+      },
+      {
+        "name": "single-filter-column",
+        "value": "410px",
+        "purpose": "Result filters stack in one column."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The choose or submit action in a sheet footer, pill-shaped and visibly focused.",
+      "html": "<button class=\"ds-button-primary\">Pilih calon</button>",
+      "css": ".ds-button-primary { background: var(--primary); color: var(--primary-foreground); border: 1px solid transparent; border-radius: 9999px; min-height: 44px; padding: 0 16px; font: 500 14px/1 \"Geist Variable\", sans-serif; transition: background-color 150ms ease; } .ds-button-primary:hover { background: color-mix(in oklab, var(--primary) 80%, transparent); } .ds-button-primary:focus-visible { outline: 3px solid color-mix(in oklab, var(--ring) 50%, transparent); outline-offset: 2px; }"
+    },
+    {
+      "name": "Candidate Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Large image-first entry to each candidate profile.",
+      "html": "<button class=\"ds-candidate-card\"><span class=\"ds-candidate-image\">Foto belum tersedia</span><span class=\"ds-candidate-body\"><strong>Nama calon</strong><small>PW asal · PD asal</small><span>Lihat profil →</span></span></button>",
+      "css": ".ds-candidate-card { display: block; width: 280px; padding: 0; overflow: hidden; text-align: left; background: var(--card); color: var(--card-foreground); border: 1px solid var(--border); border-radius: 16px; cursor: pointer; font-family: \"Geist Variable\", sans-serif; transition: transform 220ms ease, box-shadow 220ms ease; } .ds-candidate-card:hover { transform: translateY(-4px); box-shadow: 0 14px 32px -24px var(--foreground); } .ds-candidate-card:focus-visible { outline: 3px solid var(--ring); outline-offset: 4px; } .ds-candidate-image { display: grid; place-items: center; aspect-ratio: 4 / 4.5; background: var(--muted); color: var(--muted-foreground); font-size: 14px; } .ds-candidate-body { display: grid; gap: 12px; padding: 24px; } .ds-candidate-body strong { font-size: 22px; font-weight: 500; } .ds-candidate-body small { color: var(--muted-foreground); } .ds-candidate-body > span { color: var(--primary-foreground); font-weight: 600; }"
+    },
+    {
+      "name": "Profile Sheet",
+      "kind": "custom",
+      "description": "Wide candidate identity and Markdown reading surface with a persistent action footer.",
+      "html": "<section class=\"ds-profile-sheet\"><header>Kenali calon</header><div class=\"ds-profile-grid\"><div class=\"ds-profile-photo\">Foto calon</div><div><h2>Sinopsis</h2><p>Sinopsis belum disediakan.</p><h2>Visi</h2><p>Visi belum disediakan.</p></div></div><footer><button>Batal</button><button>Pilih</button></footer></section>",
+      "css": ".ds-profile-sheet { width: min(760px, 95vw); height: 400px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--border); border-radius: 20px; background: var(--popover); color: var(--foreground); font: 14px/1.5 \"Geist Variable\", sans-serif; } .ds-profile-sheet header, .ds-profile-sheet footer { flex: none; padding: 16px 24px; border-bottom: 1px solid var(--border); font-weight: 600; } .ds-profile-grid { flex: 1; min-height: 0; overflow: auto; display: grid; grid-template-columns: 45% 55%; gap: 20px; padding: 20px; } .ds-profile-photo { display: grid; place-items: center; border-radius: 16px; background: var(--muted); color: var(--muted-foreground); } .ds-profile-grid h2 { margin: 0 0 8px; font-size: 18px; } .ds-profile-grid p { margin: 0 0 24px; color: var(--muted-foreground); } .ds-profile-sheet footer { display: flex; justify-content: end; gap: 8px; border-top: 1px solid var(--border); border-bottom: 0; } .ds-profile-sheet button { padding: 8px 16px; border: 1px solid var(--border); border-radius: 9999px; background: var(--background); cursor: pointer; } .ds-profile-sheet button:last-child { background: var(--primary); color: var(--primary-foreground); }"
+    },
+    {
+      "name": "Select Trigger",
+      "kind": "input",
+      "refersTo": "select-trigger",
+      "description": "Pill-shaped combobox or select trigger with a visible focus halo.",
+      "html": "<button class=\"ds-select-trigger\" aria-haspopup=\"listbox\">Pilih asal PW <span aria-hidden=\"true\">⌄</span></button>",
+      "css": ".ds-select-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 260px; min-height: 44px; padding: 0 12px; border: 1px solid var(--input); border-radius: 9999px; background: color-mix(in oklab, var(--input) 30%, transparent); color: var(--foreground); font: 400 16px \"Geist Variable\", sans-serif; } .ds-select-trigger:focus-visible { border-color: var(--ring); outline: 3px solid color-mix(in oklab, var(--ring) 50%, transparent); outline-offset: 1px; }"
+    },
+    {
+      "name": "Select Menu",
+      "kind": "custom",
+      "description": "Floating option surface with soft lift and rounded rows.",
+      "html": "<div class=\"ds-select-menu\" role=\"listbox\"><div class=\"ds-select-option\" role=\"option\" aria-selected=\"true\">PW asal</div><div class=\"ds-select-option\" role=\"option\">PW lainnya</div></div>",
+      "css": ".ds-select-menu { width: 260px; padding: 4px; border-radius: 16px; background: var(--popover); color: var(--popover-foreground); box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%), 0 0 0 1px rgb(0 0 0 / 5%); } .ds-select-option { padding: 8px 12px; border-radius: 12px; font: 400 14px \"Geist Variable\", sans-serif; } .ds-select-option[aria-selected=true], .ds-select-option:hover { background: var(--accent); color: var(--accent-foreground); }"
+    },
+    {
+      "name": "Results Chart",
+      "kind": "custom",
+      "description": "Horizontal candidate bars paired with exact count and percentage labels.",
+      "html": "<section class=\"ds-results-chart\"><h2>Suara per calon</h2><div class=\"ds-bar\"><span style=\"width:65%\"></span></div><p>Nama calon · 13 suara · 65%</p></section>",
+      "css": ".ds-results-chart { width: 340px; padding: 24px; border: 1px solid var(--border); border-radius: 16px; background: var(--card); color: var(--foreground); font: 14px/1.5 \"Geist Variable\", sans-serif; } .ds-results-chart h2 { margin: 0 0 20px; font-size: 19px; font-weight: 600; } .ds-bar { height: 24px; background: var(--muted); border-radius: 0 8px 8px 0; } .ds-bar span { display: block; height: 100%; border-radius: 0 8px 8px 0; background: var(--primary); } .ds-results-chart p { margin: 12px 0 0; font-weight: 600; }"
+    },
+    {
+      "name": "Results Table",
+      "kind": "custom",
+      "description": "Plain cross-tabulation that scrolls rather than squeezing columns.",
+      "html": "<div class=\"ds-table-wrap\"><table class=\"ds-table\"><thead><tr><th>Calon</th><th>Asal PW</th><th>Suara</th></tr></thead><tbody><tr><td>Nama calon</td><td>Nama wilayah</td><td>12</td></tr></tbody></table></div>",
+      "css": ".ds-table-wrap { overflow-x: auto; } .ds-table { width: 100%; border-collapse: collapse; text-align: left; font: 400 14px/1.5 \"Geist Variable\", sans-serif; } .ds-table th, .ds-table td { padding: 12px; border-bottom: 1px solid var(--border); white-space: nowrap; } .ds-table th { color: var(--muted-foreground); font-weight: 500; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Open Forum Signal",
+    "overview": "The interface should feel like a clear public notice from a community: open, practical, and easy to act on. Fresh green gives the central action an optimistic signal, while quiet gray neutrals keep the vote form and detailed results legible. The mood is warm and community-minded without borrowing the gloss or spectacle of a campaign identity.\n\nThe candidate page begins with large photo cards and a single invitation to choose. A profile sheet keeps the candidate's identity beside a readable profile; a narrower form sheet follows the decision. Results have their own page with a chart before the detailed table. Controls remain soft and tactile while the open select menu gains the strongest lift.",
+    "keyCharacteristics": [
+      "Public and direct, with community warmth",
+      "Fresh green used as a functional signal",
+      "Quiet, slightly warm neutrals for reading and structure",
+      "Softly rounded controls and restrained surface depth"
+    ],
+    "rules": [
+      {
+        "name": "The Signal Color Rule",
+        "body": "Use green to identify the action or selected state; let neutral surfaces carry the reading load.",
+        "section": "colors"
+      },
+      {
+        "name": "The Plain-Language Type Rule",
+        "body": "Use hierarchy and weight to organize information; keep labels readable and avoid ornamental display typography.",
+        "section": "typography"
+      },
+      {
+        "name": "The Menu Lift Rule",
+        "body": "Keep resting surfaces quiet; use stronger elevation only for overlays that need to sit above the page.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use semantic theme tokens so light and dark modes stay aligned.",
+      "Do keep candidate identity, the poll action, and privacy/context copy easy to read.",
+      "Do keep sheet actions visible while their content scrolls.",
+      "Do preserve the wide results region and horizontal table overflow behavior.",
+      "Do use a visible focus treatment for keyboard-operated controls."
+    ],
+    "donts": [
+      "Don't turn the interface into a corporate campaign identity or add campaign-style spectacle.",
+      "Don't use the primary green as a large decorative background when it weakens text contrast or action hierarchy.",
+      "Don't apply the open-menu shadow to every resting card or control.",
+      "Don't compress result columns until values become difficult to scan; allow horizontal scrolling instead."
+    ]
+  }
+}

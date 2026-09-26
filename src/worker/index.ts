@@ -1,6 +1,287 @@
+import { DurableObject } from "cloudflare:workers";
 import { Hono } from "hono";
-const app = new Hono<{ Bindings: Env }>();
+import { candidates } from "../data/candidates";
 
-app.get("/api/", (c) => c.json({ name: "Cloudflare" }));
+type Organization = {
+	id: string;
+	nama: string;
+	slug: string;
+	jenis: string;
+};
+type CachedDirectory = { items: Organization[]; savedAt: number };
+type RuntimeEnv = Env & { KAMMI_API_TOKEN?: string };
 
-export default app;
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+const VOTE_RETENTION_DAYS = 90;
+const ORGANIZATION_API = "https://www.kammi.id/api/v1/struktur";
+const VOTE_CLOSES_AT = Date.parse("2026-10-29T16:59:59.999Z");
+const EDIT_COOKIE = "poll_edit";
+const CADRE_LEVELS = ["AB1", "AB2", "AB3"] as const;
+const LEADERSHIP_POSITIONS = [
+	"Ketua", "Sekretaris", "Bendahara", "Kaderisasi", "Ketua Bidang", "Ketua Departemen", "Staf Bidang", "Non Pengurus",
+] as const;
+
+type VoteInput = {
+	candidateId: string;
+	pwId: string;
+	pdId: string;
+	cadreLevel: (typeof CADRE_LEVELS)[number];
+	leadershipPosition: (typeof LEADERSHIP_POSITIONS)[number];
+};
+type VoteRow = VoteInput & { pwName: string; pdName: string };
+
+export class OrganizationDirectoryCache extends DurableObject<RuntimeEnv> {
+	async fetch(request: Request): Promise<Response> {
+		const requestUrl = new URL(request.url);
+		const kind = requestUrl.searchParams.get("jenis");
+		const ancestor = requestUrl.searchParams.get("ancestor");
+
+		if (kind !== "pw" && kind !== "pd") {
+			return Response.json({ error: "Jenis organisasi tidak valid." }, { status: 400 });
+		}
+		if (kind === "pd" && !ancestor) {
+			return Response.json({ error: "Asal PW wajib dipilih." }, { status: 400 });
+		}
+
+		const cacheKey = kind === "pw" ? "pw" : `pd:${ancestor}`;
+		const cached = await this.ctx.storage.get<CachedDirectory>(cacheKey);
+		if (cached && Date.now() - cached.savedAt < CACHE_TTL_MS) {
+			return Response.json(cached.items);
+		}
+
+		if (!this.env.KAMMI_API_TOKEN) {
+			return cached
+				? Response.json(cached.items, { headers: { "X-Directory-Cache": "stale" } })
+				: Response.json({ error: "Daftar organisasi belum tersedia." }, { status: 503 });
+		}
+
+		const upstreamUrl = new URL(ORGANIZATION_API);
+		upstreamUrl.searchParams.set("jenis", kind);
+		if (kind === "pd") upstreamUrl.searchParams.set("ancestor", ancestor!);
+
+		try {
+			const response = await fetch(upstreamUrl, {
+				headers: { Authorization: `Bearer ${this.env.KAMMI_API_TOKEN}` },
+			});
+			if (!response.ok) throw new Error("Upstream request failed");
+
+			const payload: unknown = await response.json();
+			if (!Array.isArray(payload)) throw new Error("Invalid upstream response");
+			const items = payload.filter(isOrganization);
+			if (items.length !== payload.length) throw new Error("Invalid upstream organization");
+
+			const updated = { items, savedAt: Date.now() } satisfies CachedDirectory;
+			await this.ctx.storage.put(cacheKey, updated);
+			return Response.json(items);
+		} catch {
+			return cached
+				? Response.json(cached.items, { headers: { "X-Directory-Cache": "stale" } })
+				: Response.json({ error: "Daftar organisasi belum tersedia." }, { status: 503 });
+		}
+	}
+}
+
+function isOrganization(value: unknown): value is Organization {
+	if (typeof value !== "object" || value === null) return false;
+	const organization = value as Record<string, unknown>;
+	return (
+		typeof organization.id === "string" &&
+		typeof organization.nama === "string" &&
+		typeof organization.slug === "string" &&
+		typeof organization.jenis === "string"
+	);
+}
+
+const app = new Hono<{ Bindings: RuntimeEnv }>();
+
+app.get("/api/struktur", async (c) => {
+	const kind = c.req.query("jenis");
+	const ancestor = c.req.query("ancestor");
+	if (kind !== "pw" && kind !== "pd") {
+		return c.json({ error: "Jenis organisasi tidak valid." }, 400);
+	}
+	if (kind === "pd" && !ancestor) {
+		return c.json({ error: "Asal PW wajib dipilih." }, 400);
+	}
+
+	const url = new URL("https://directory-cache.internal/");
+	url.searchParams.set("jenis", kind);
+	if (kind === "pd") url.searchParams.set("ancestor", ancestor!);
+	const id = c.env.ORGANIZATION_DIRECTORY.idFromName("polling-organizations");
+	return c.env.ORGANIZATION_DIRECTORY.get(id).fetch(url);
+});
+
+app.get("/api/suara", async (c) => {
+	await closePollingIfDue(c.env);
+	const closed = await isPollingClosed(c.env);
+	const currentToken = getCookie(c.req.header("Cookie"), EDIT_COOKIE);
+	const token = currentToken ?? createToken();
+	if (!currentToken) {
+		const response = c.json({ vote: null, closed }, 200, { "Cache-Control": "no-store" });
+		if (!closed) setEditCookie(response, token, c.req.url);
+		return response;
+	}
+	if (closed) return c.json({ vote: null, closed }, 200, { "Cache-Control": "no-store" });
+	const tokenHash = await hashToken(token);
+	const vote = await c.env.POLLING_DB.prepare(
+		"SELECT candidate_id AS candidateId, pw_id AS pwId, pw_name AS pwName, pd_id AS pdId, pd_name AS pdName, cadre_level AS cadreLevel, leadership_position AS leadershipPosition FROM votes WHERE token_hash = ?",
+	).bind(tokenHash).first<VoteRow>();
+	return c.json({ vote, closed }, 200, { "Cache-Control": "no-store" });
+});
+
+app.get("/api/hasil", async (c) => {
+	await closePollingIfDue(c.env);
+	const closed = await isPollingClosed(c.env);
+	const results = closed
+		? await c.env.POLLING_DB.prepare(
+			"SELECT candidate_id AS candidateId, pw_id AS pwId, pw_name AS pwName, pd_id AS pdId, pd_name AS pdName, cadre_level AS cadreLevel, leadership_position AS leadershipPosition, vote_count AS voteCount FROM poll_results ORDER BY candidate_id, pw_name, pd_name, cadre_level, leadership_position",
+		).all()
+		: await c.env.POLLING_DB.prepare(
+			"SELECT candidate_id AS candidateId, pw_id AS pwId, pw_name AS pwName, pd_id AS pdId, pd_name AS pdName, cadre_level AS cadreLevel, leadership_position AS leadershipPosition, COUNT(*) AS voteCount FROM votes GROUP BY candidate_id, pw_id, pw_name, pd_id, pd_name, cadre_level, leadership_position ORDER BY candidate_id, pw_name, pd_name, cadre_level, leadership_position",
+		).all();
+	return c.json({ closed, results: results.results }, 200, { "Cache-Control": "no-store" });
+});
+
+app.post("/api/suara", async (c) => {
+	await closePollingIfDue(c.env);
+	if (await isPollingClosed(c.env)) {
+		return c.json({ error: "Polling telah ditutup." }, 410, { "Cache-Control": "no-store" });
+	}
+	let body: unknown;
+	try {
+		body = await c.req.json();
+	} catch {
+		return c.json({ error: "Format suara tidak valid." }, 400, { "Cache-Control": "no-store" });
+	}
+	if (!isVoteInput(body)) {
+		return c.json({ error: "Lengkapi seluruh pilihan dengan benar." }, 400, { "Cache-Control": "no-store" });
+	}
+	const candidate = candidates.find(({ id }) => id === body.candidateId);
+	if (!candidate) {
+		return c.json({ error: "Daftar calon belum tersedia." }, 503, { "Cache-Control": "no-store" });
+	}
+
+	const [pwResponse, pdResponse] = await Promise.all([
+		loadDirectory(c.env, "pw"),
+		loadDirectory(c.env, "pd", body.pwId),
+	]);
+	if (!pwResponse || !pdResponse) {
+		return c.json({ error: "Daftar organisasi belum tersedia. Suara belum disimpan." }, 503, { "Cache-Control": "no-store" });
+	}
+	const pw = pwResponse.find((item) => item.id === body.pwId && item.jenis === "pw");
+	const pd = pdResponse.find((item) => item.id === body.pdId && item.jenis === "pd");
+	if (!pw || !pd) {
+		return c.json({ error: "Pilihan asal PW atau PD tidak valid." }, 400, { "Cache-Control": "no-store" });
+	}
+
+	const existingToken = getCookie(c.req.header("Cookie"), EDIT_COOKIE);
+	const token = existingToken ?? createToken();
+	const tokenHash = await hashToken(token);
+	const saved = await c.env.POLLING_DB.prepare(
+		`INSERT INTO votes (token_hash, candidate_id, pw_id, pw_name, pd_id, pd_name, cadre_level, leadership_position)
+		 SELECT ?, ?, ?, ?, ?, ?, ?, ?
+		 WHERE NOT EXISTS (SELECT 1 FROM poll_state WHERE id = 1) AND unixepoch('now') <= ?
+		 ON CONFLICT(token_hash) DO UPDATE SET candidate_id = excluded.candidate_id, pw_id = excluded.pw_id,
+		 pw_name = excluded.pw_name, pd_id = excluded.pd_id, pd_name = excluded.pd_name,
+		 cadre_level = excluded.cadre_level, leadership_position = excluded.leadership_position,
+		 updated_at = CURRENT_TIMESTAMP`,
+	).bind(tokenHash, candidate.id, pw.id, pw.nama, pd.id, pd.nama, body.cadreLevel, body.leadershipPosition, Math.floor(VOTE_CLOSES_AT / 1000)).run();
+	if (saved.meta.changes === 0) {
+		return c.json({ error: "Polling telah ditutup." }, 410, { "Cache-Control": "no-store" });
+	}
+
+	const response = c.json({ ok: true, updated: Boolean(existingToken) }, 200, { "Cache-Control": "no-store" });
+	if (!existingToken) {
+		setEditCookie(response, token, c.req.url);
+	}
+	return response;
+});
+
+function isVoteInput(value: unknown): value is VoteInput {
+	if (typeof value !== "object" || value === null) return false;
+	const input = value as Record<string, unknown>;
+	return typeof input.candidateId === "string" && typeof input.pwId === "string" &&
+		typeof input.pdId === "string" &&
+		CADRE_LEVELS.includes(input.cadreLevel as (typeof CADRE_LEVELS)[number]) &&
+		LEADERSHIP_POSITIONS.includes(input.leadershipPosition as (typeof LEADERSHIP_POSITIONS)[number]);
+}
+
+async function isPollingClosed(env: RuntimeEnv) {
+	const state = await env.POLLING_DB.prepare("SELECT id FROM poll_state WHERE id = 1").first();
+	return Boolean(state);
+}
+
+async function closePollingIfDue(env: RuntimeEnv) {
+	if (Date.now() < VOTE_CLOSES_AT) return;
+	if (await isPollingClosed(env)) {
+		await deleteExpiredVoteDetails(env);
+		return;
+	}
+	const closedAt = new Date(VOTE_CLOSES_AT).toISOString();
+	await env.POLLING_DB.batch([
+		env.POLLING_DB.prepare(
+			`INSERT OR IGNORE INTO poll_results
+			 (candidate_id, pw_id, pw_name, pd_id, pd_name, cadre_level, leadership_position, vote_count)
+			 SELECT candidate_id, pw_id, pw_name, pd_id, pd_name, cadre_level, leadership_position, COUNT(*)
+			 FROM votes GROUP BY candidate_id, pw_id, pw_name, pd_id, pd_name, cadre_level, leadership_position`,
+		),
+		env.POLLING_DB.prepare("UPDATE votes SET token_hash = NULL WHERE token_hash IS NOT NULL"),
+		env.POLLING_DB.prepare("INSERT OR IGNORE INTO poll_state (id, closed_at) VALUES (1, ?)").bind(closedAt),
+	]);
+	await deleteExpiredVoteDetails(env);
+}
+
+async function deleteExpiredVoteDetails(env: RuntimeEnv) {
+	await env.POLLING_DB.prepare(
+		`DELETE FROM votes
+		 WHERE EXISTS (
+			 SELECT 1 FROM poll_state
+			 WHERE id = 1 AND julianday(closed_at) <= julianday('now', '-${VOTE_RETENTION_DAYS} days')
+		 )`,
+	).run();
+}
+
+export default {
+	fetch: app.fetch,
+	async scheduled(_controller: ScheduledController, env: RuntimeEnv) {
+		if (Date.now() >= VOTE_CLOSES_AT) await closePollingIfDue(env);
+	},
+};
+
+async function loadDirectory(env: RuntimeEnv, kind: "pw" | "pd", ancestor?: string) {
+	const url = new URL("https://directory-cache.internal/");
+	url.searchParams.set("jenis", kind);
+	if (ancestor) url.searchParams.set("ancestor", ancestor);
+	const id = env.ORGANIZATION_DIRECTORY.idFromName("polling-organizations");
+	try {
+		const response = await env.ORGANIZATION_DIRECTORY.get(id).fetch(url);
+		if (!response.ok) return null;
+		const items: unknown = await response.json();
+		return Array.isArray(items) ? items.filter(isOrganization) : null;
+	} catch {
+		return null;
+	}
+}
+
+function createToken() {
+	const bytes = crypto.getRandomValues(new Uint8Array(32));
+	return btoa(String.fromCharCode(...bytes)).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
+}
+
+async function hashToken(token: string) {
+	const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
+	return Array.from(new Uint8Array(bytes), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function getCookie(header: string | undefined, name: string) {
+	const prefix = `${name}=`;
+	const value = header?.split(";").map((part) => part.trim()).find((part) => part.startsWith(prefix));
+	return value ? value.slice(prefix.length) : undefined;
+}
+
+function setEditCookie(response: Response, token: string, requestUrl: string) {
+	response.headers.append(
+		"Set-Cookie",
+		`${EDIT_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=31536000${new URL(requestUrl).protocol === "https:" ? "; Secure" : ""}`,
+	);
+}
