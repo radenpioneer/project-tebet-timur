@@ -142,15 +142,10 @@
 
 .poll-card {
 	width: min(100%, 38rem);
-	padding: clamp(1.5rem, 5vw, 3rem);
-	border: 1px solid var(--border);
-	border-radius: var(--radius-2xl);
-	background: var(--card);
-	box-shadow: 0 1.5rem 4rem oklch(0.153 0.006 107.1 / 8%);
 }
 
 .poll-eyebrow {
-	margin: 0 0 0.5rem;
+	margin: 0;
 	color: var(--primary-foreground);
 	font-size: 0.75rem;
 	font-weight: 700;
@@ -158,76 +153,15 @@
 	text-transform: uppercase;
 }
 
-.poll-card h1 {
-	margin: 0;
+.poll-title {
 	font-size: clamp(1.75rem, 5vw, 2.25rem);
 	letter-spacing: -0.04em;
 }
 
-.poll-intro {
-	margin: 0.75rem 0 2rem;
-	color: var(--muted-foreground);
-	line-height: 1.6;
-}
-
-.poll-fields {
-	display: grid;
-	gap: 1.25rem;
-}
-
-.poll-field {
-	display: grid;
-	gap: 0.5rem;
-}
-
-.poll-field label {
-	font-size: 0.875rem;
-	font-weight: 600;
-}
-
-.poll-field select {
-	width: 100%;
-	min-height: 3rem;
-	padding: 0.65rem 0.85rem;
-	border: 1px solid var(--input);
-	border-radius: var(--radius-lg);
-	background: var(--background);
-	color: var(--foreground);
-	font: inherit;
-}
-
-.poll-field select:focus-visible,
-.text-button:focus-visible {
-	outline: 2px solid var(--ring);
-	outline-offset: 2px;
-}
-
-.poll-field select:disabled {
-	cursor: not-allowed;
-	color: var(--muted-foreground);
-}
-
-.field-message,
 .poll-status {
 	margin: 0;
 	font-size: 0.875rem;
 	line-height: 1.5;
-}
-
-.field-message {
-	color: var(--destructive);
-}
-
-.text-button {
-	padding: 0;
-	border: 0;
-	background: transparent;
-	color: inherit;
-	cursor: pointer;
-	font: inherit;
-	font-weight: 700;
-	text-decoration: underline;
-	text-underline-offset: 0.15em;
 }
 
 .poll-status {

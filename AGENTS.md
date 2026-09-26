@@ -70,3 +70,7 @@ Issues and specs live as Markdown files under `.scratch/<feature>/`. See `docs/a
 ### Domain docs
 
 single-context layout. See `docs/agents/domain.md`.
+
+### UI components
+
+For React UI, use installed shadcn components whenever an equivalent exists. If the project does not have one, add the matching component from its configured shadcn registry before creating a parallel custom control.

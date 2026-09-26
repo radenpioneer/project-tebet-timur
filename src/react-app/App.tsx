@@ -1,4 +1,15 @@
 import { useEffect, useState } from "react";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import { Field, FieldError, FieldGroup, FieldLabel } from "~/components/ui/field";
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "~/components/ui/select";
 
 type Organization = {
 	id: string;
@@ -76,8 +87,8 @@ function App() {
 	const selectedPw = pws.find((pw) => pw.id === selectedPwId);
 	const selectedPd = pds.find((pd) => pd.id === selectedPdId);
 	const canContinue = Boolean(selectedPw && selectedPd && pwState === "ready" && pdState === "ready");
-	const handlePwChange = (id: string) => {
-		setSelectedPwId(id);
+	const handlePwChange = (id: string | null) => {
+		setSelectedPwId(id ?? "");
 		setPds([]);
 		setSelectedPdId("");
 		setPdError("");
@@ -86,97 +97,111 @@ function App() {
 
 	return (
 		<main className="poll-page">
-			<section className="poll-card" aria-labelledby="poll-title">
-				<p className="poll-eyebrow">Polling aspirasi</p>
-				<h1 id="poll-title">Asal PW dan PD</h1>
-				<p className="poll-intro">
-					Pilih wilayah dan daerah tempat Anda berasal. Pilihan ini akan disimpan bersama suara Anda.
-				</p>
+			<Card className="poll-card w-full max-w-2xl" role="region" aria-labelledby="poll-title">
+				<CardHeader>
+					<p className="poll-eyebrow">Polling aspirasi</p>
+					<CardTitle id="poll-title" className="poll-title">
+						Asal PW dan PD
+					</CardTitle>
+					<CardDescription>
+						Pilih wilayah dan daerah tempat Anda berasal. Pilihan ini akan disimpan bersama suara Anda.
+					</CardDescription>
+				</CardHeader>
 
-				<div className="poll-fields">
-					<div className="poll-field">
-						<label htmlFor="asal-pw">Asal Pengurus Wilayah (PW)</label>
-						<select
-							id="asal-pw"
-							value={selectedPwId}
-							disabled={pwState !== "ready"}
-							required
-							onChange={(event) => handlePwChange(event.target.value)}
-						>
-							<option value="">
-								{pwState === "loading" ? "Memuat daftar PW…" : "Pilih PW"}
-							</option>
-							{pws.map((pw) => (
-								<option key={pw.id} value={pw.id}>
-									{pw.nama}
-								</option>
-							))}
-						</select>
-						{pwState === "error" && (
-							<p className="field-message" role="alert">
-								{pwError}{" "}
-								<button
-									className="text-button"
-									type="button"
-									onClick={() => {
-										setPwState("loading");
-										setPwError("");
-										setReloadPws((n) => n + 1);
-									}}
-								>
-									Coba lagi
-								</button>
-							</p>
-						)}
-					</div>
+				<CardContent>
+					<FieldGroup>
+						<Field data-disabled={pwState !== "ready"}>
+							<FieldLabel htmlFor="asal-pw">Asal Pengurus Wilayah (PW)</FieldLabel>
+							<Select
+								value={selectedPwId || null}
+								disabled={pwState !== "ready"}
+								onValueChange={handlePwChange}
+							>
+								<SelectTrigger id="asal-pw" className="w-full" aria-required="true">
+									<SelectValue placeholder={pwState === "loading" ? "Memuat daftar PW…" : "Pilih PW"} />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectGroup>
+										{pws.map((pw) => (
+											<SelectItem key={pw.id} value={pw.id}>
+												{pw.nama}
+											</SelectItem>
+										))}
+									</SelectGroup>
+								</SelectContent>
+							</Select>
+							{pwState === "error" && (
+								<FieldError>
+									{pwError}{" "}
+									<Button
+										variant="link"
+										size="sm"
+										onClick={() => {
+											setPwState("loading");
+											setPwError("");
+											setReloadPws((n) => n + 1);
+										}}
+									>
+										Coba lagi
+									</Button>
+								</FieldError>
+							)}
+						</Field>
 
-					<div className="poll-field">
-						<label htmlFor="asal-pd">Asal Pengurus Daerah (PD)</label>
-						<select
-							id="asal-pd"
-							value={selectedPdId}
-							disabled={!selectedPwId || pdState !== "ready"}
-							required
-							onChange={(event) => setSelectedPdId(event.target.value)}
-						>
-							<option value="">
-								{!selectedPwId
-									? "Pilih PW terlebih dahulu"
-									: pdState === "loading"
-										? "Memuat daftar PD…"
-										: "Pilih PD"}
-							</option>
-							{pds.map((pd) => (
-								<option key={pd.id} value={pd.id}>
-									{pd.nama}
-								</option>
-							))}
-						</select>
-						{pdState === "error" && selectedPwId && (
-							<p className="field-message" role="alert">
-								{pdError}{" "}
-								<button
-									className="text-button"
-									type="button"
-									onClick={() => {
-										setPdState("loading");
-										setPdError("");
-										setReloadPds((n) => n + 1);
-									}}
-								>
-									Coba lagi
-								</button>
-							</p>
-						)}
-					</div>
-				</div>
+						<Field data-disabled={!selectedPwId || pdState !== "ready"}>
+							<FieldLabel htmlFor="asal-pd">Asal Pengurus Daerah (PD)</FieldLabel>
+							<Select
+								value={selectedPdId || null}
+								disabled={!selectedPwId || pdState !== "ready"}
+								onValueChange={(id) => setSelectedPdId(id ?? "")}
+							>
+								<SelectTrigger id="asal-pd" className="w-full" aria-required="true">
+									<SelectValue
+									placeholder={
+										!selectedPwId
+											? "Pilih PW terlebih dahulu"
+											: pdState === "loading"
+												? "Memuat daftar PD…"
+												: "Pilih PD"
+									}
+									/>
+								</SelectTrigger>
+								<SelectContent>
+									<SelectGroup>
+										{pds.map((pd) => (
+											<SelectItem key={pd.id} value={pd.id}>
+												{pd.nama}
+											</SelectItem>
+										))}
+									</SelectGroup>
+								</SelectContent>
+							</Select>
+							{pdState === "error" && selectedPwId && (
+								<FieldError>
+									{pdError}{" "}
+									<Button
+										variant="link"
+										size="sm"
+										onClick={() => {
+											setPdState("loading");
+											setPdError("");
+											setReloadPds((n) => n + 1);
+										}}
+									>
+										Coba lagi
+									</Button>
+								</FieldError>
+							)}
+						</Field>
+					</FieldGroup>
 
-				<p className="poll-status" aria-live="polite">
-					{canContinue && selectedPw && selectedPd
-						? `Pilihan tersimpan: ${selectedPw.nama} / ${selectedPd.nama}`
-						: "Pilih PW dan PD untuk melanjutkan."}
-				</p>
-			</section>
+					<p className="poll-status" aria-live="polite">
+						{canContinue && selectedPw && selectedPd
+							? `Pilihan tersimpan: ${selectedPw.nama} / ${selectedPd.nama}`
+							: "Pilih PW dan PD untuk melanjutkan."}
+					</p>
+				</CardContent>
+			</Card>
 		</main>
 	);
 }
