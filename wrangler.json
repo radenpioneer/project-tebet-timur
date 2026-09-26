@@ -5,6 +5,14 @@
 	"compatibility_date": "2025-10-08",
 	"compatibility_flags": ["nodejs_compat"],
 	"observability": { "enabled": true },
+	"durable_objects": {
+		"bindings": [
+			{ "name": "ORGANIZATION_DIRECTORY", "class_name": "OrganizationDirectoryCache" }
+		]
+	},
+	"migrations": [
+		{ "tag": "v1", "new_sqlite_classes": ["OrganizationDirectoryCache"] }
+	],
 	"upload_source_maps": true,
 	"assets": {
 		"directory": "./dist/client",
