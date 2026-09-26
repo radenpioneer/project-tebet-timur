@@ -23,6 +23,12 @@ Hitungan jawaban berdasarkan satu atau lebih dimensi hasil, tanpa token edit.
 **Calon**:
 Kandidat ketua umum yang menjadi pilihan dalam polling.
 
+**Pilihan**:
+Calon yang dipilih peserta sebelum suara dikirim atau saat suara diubah.
+
+**Profil calon**:
+Uraian publik calon yang mencakup sinopsis, visi, misi, dan program unggulan.
+
 **Asal PW / asal PD**:
 Pilihan organisasi wilayah dan daerah kader yang mengisi polling; PD berada di bawah PW yang dipilih.
 

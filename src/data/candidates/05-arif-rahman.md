@@ -1,7 +1,7 @@
 ---
-nama: Edo Agasiswanto
-asal_pw: Jawa Timur
-asal_pd: Surabaya
+nama: Arif Rahman
+asal_pw: NTB
+asal_pd: Mataram
 foto: ""
 ---
 

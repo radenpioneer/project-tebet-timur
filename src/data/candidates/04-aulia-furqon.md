@@ -1,7 +1,7 @@
 ---
-nama: Edo Agasiswanto
-asal_pw: Jawa Timur
-asal_pd: Surabaya
+nama: Aulia Furqon
+asal_pw: Kaltimtara
+asal_pd: Samarinda
 foto: ""
 ---
 

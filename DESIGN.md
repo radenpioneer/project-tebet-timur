@@ -15,8 +15,8 @@ colors:
 typography:
   display:
     fontFamily: "Geist Variable, sans-serif"
-    fontSize: "clamp(1.75rem, 5vw, 2.25rem)"
-    fontWeight: 500
+    fontSize: "clamp(2.3rem, 5vw, 4.75rem)"
+    fontWeight: 550
     letterSpacing: "-0.04em"
   body:
     fontFamily: "Geist Variable, sans-serif"
@@ -25,6 +25,7 @@ typography:
 rounded:
   control: "2.5rem"
   card: "1rem"
+  sheet: "1.25rem"
   item: "0.75rem"
 spacing:
   compact: "0.75rem"
@@ -58,7 +59,7 @@ components:
 
 The interface should feel like a clear public notice from a community: open, practical, and easy to act on. Fresh green gives the central action an optimistic signal, while quiet gray neutrals keep the vote form and detailed results legible. The mood is warm and community-minded without borrowing the gloss or spectacle of a campaign identity.
 
-The current page places a focused response card ahead of a broader results area. Its controls are soft and tactile, with rounded silhouettes; the card remains calm and the select menu gains the strongest lift when it opens. Preserve this balance across future screens: direct information first, friendly interaction second.
+The candidate page begins with large photo cards and a single invitation to choose. A profile sheet keeps the candidate's identity beside a readable profile; a narrower form sheet follows the decision. Results have their own page with a chart before the detailed table. Controls remain soft and tactile while the open select menu gains the strongest lift.
 
 **Key Characteristics:**
 - Public and direct, with community warmth
@@ -93,12 +94,12 @@ Fresh Green + Quiet Gray: a vivid lime primary sits against near-white surfaces 
 
 **Body Font:** Geist Variable (with sans-serif fallback)
 
-**Character:** Compact, contemporary sans-serif typography keeps instructions and tabular data matter-of-fact. The title adds a tight display size and tracking shift, while labels stay clear and functional.
+**Character:** Contemporary sans-serif typography gives the invitation room to breathe while keeping form labels and result data plain. Large page titles use tight tracking; profiles and filters use smaller, direct headings.
 
 ### Hierarchy
-- **Display** (500, `clamp(1.75rem, 5vw, 2.25rem)`, normal line-height): Poll title, scaling with the viewport.
-- **Headline** (500, `1rem`): Section headings and prominent result labels, following the component-library scale.
-- **Title** (500, `1rem`): Card and control titles.
+- **Display** (550, `clamp(2.3rem, 5vw, 4.75rem)`, `1.02` line-height): Candidate and results page titles. At narrow widths, use `clamp(2.3rem, 9vw, 3.5rem)`.
+- **Headline** (600, about `1.2rem`): Profile and results section headings.
+- **Title** (500, `1.35rem` on candidate cards): Candidate names and prominent card titles.
 - **Body** (400, `0.875rem`, `1.5` line-height): Form descriptions, status, and table content.
 - **Label** (500, `0.875rem`): Field labels; uppercase eyebrow text uses `0.75rem`, weight 700, and `0.08em` tracking.
 
@@ -106,9 +107,9 @@ Fresh Green + Quiet Gray: a vivid lime primary sits against near-white surfaces 
 
 ## Layout
 
-The poll page is a centered, single-column composition with a minimum viewport-height canvas, a `2rem 1rem` outer inset, and `2rem` vertical separation. The response card is capped at `38rem`; results may expand to `72rem` so their filters and cross-tabulation can be scanned without forcing the form to grow equally wide. Filter controls use an auto-fitting grid with a `12rem` minimum column and `0.75rem` gaps. On narrow screens, the grid collapses naturally and the table scrolls horizontally rather than compressing its values.
+The candidate and results pages use a centered canvas capped at `76rem`. Candidate cards form a single horizontally scrollable row at every viewport width, with the next card peeking into view; desktop shows several cards at once, while mobile uses wider cards for touch. The row can also be focused and scrolled with the keyboard. The profile sheet opens from the right at `95vw` by `95dvh`; its photo and identity sit left of four profile sections. The form sheet uses the same height and a narrower width, capped at `34rem`. Below `768px`, both sheets rise from the bottom and their bodies scroll independently of their always-visible action footers.
 
-Use `1.5rem` around major card sections, `1.75rem` between field groups, and `0.75rem` for compact filter and table-cell spacing where the current styles establish those values. Keep the form and results as distinct reading zones.
+The results page puts filters above a horizontal bar chart and detailed table. Five filters share a row where space allows, then wrap to two columns and one column at the smallest widths. The table scrolls horizontally rather than squeezing its values. Use `1.5rem` around major card sections and `0.75rem` for compact filter and table spacing.
 
 ## Elevation & Depth
 
@@ -121,7 +122,7 @@ The system is mostly flat. Cards use a faint outline to separate them from the p
 
 ## Shapes
 
-Controls use generous pill-like corners (the shared radius resolves to `2.5rem` for `rounded-4xl`). Cards and menus use a softer `1rem` radius; option rows use `0.75rem`. Thin neutral borders and rings define component edges. The shape language is rounded but restrained: avoid adding decorative outlines, badges, or clipped silhouettes without a real interaction role.
+Controls use generous pill-like corners (the shared radius resolves to `2.5rem` for `rounded-4xl`). Candidate cards and menus use `1rem`, sheets use `1.25rem`, and option rows use `0.75rem`. Thin neutral borders and rings define component edges. The selected-candidate badge conveys an actual saved choice.
 
 ## Components
 
@@ -136,15 +137,21 @@ Controls use generous pill-like corners (the shared radius resolves to `2.5rem` 
 - **Corner Style:** Soft `1rem` outer corners, with nested headers following the card's geometry.
 - **Background:** Open Paper in light theme and the semantic card surface in dark theme.
 - **Shadow Strategy:** A faint foreground ring separates the card; do not give resting cards the menu's heavy shadow.
-- **Internal Padding:** `1.5rem` by default; compact card variants use `1rem`.
+- **Internal Padding:** `1.5rem` by default; compact card variants use `1rem`. Candidate cards reserve a large image area and reveal the name and origin underneath.
 
 ### Inputs / Fields
-- **Style:** Full-width select triggers in the poll form use a translucent input surface, a subtle border, pill corners, and `0.75rem` horizontal padding.
+- **Style:** Full-width combobox and select triggers in the form use a translucent input surface, a subtle border, pill corners, and `0.75rem` horizontal padding.
 - **Focus:** Shift the border to the semantic ring and add a visible `3px` focus halo.
 - **Error / Disabled:** Errors use the destructive semantic color. Disabled controls reduce opacity and show a not-allowed cursor.
 - **Open menu:** The popup aligns to the trigger width, has `1rem` corners, and uses the stronger menu elevation. Focused options use the semantic accent surface.
 
-### Results Table
+### Sheets
+- **Profile:** A large two-column reading surface on desktop, with image and identity left, Markdown sections right. The mobile sheet uses one column.
+- **Form:** A narrower reading surface with the selected candidate card above organization and role controls.
+- **Actions:** The footer remains visible while the body scrolls; neutral Batal and green primary actions stay grouped at the bottom.
+
+### Results Chart and Table
+- **Chart:** Horizontal bars use the green primary; an adjacent text summary gives every candidate's count and percentage without relying on the graphic alone.
 - **Character:** Dense but readable; results remain plain data rather than decorative cards.
 - **Structure:** Left-aligned columns, collapsed borders, and a `0.75rem` cell inset.
 - **Responsive behavior:** Preserve each value on one line and allow horizontal scrolling at narrow widths.
@@ -153,7 +160,8 @@ Controls use generous pill-like corners (the shared radius resolves to `2.5rem` 
 
 ### Do:
 - **Do** use semantic theme tokens so light and dark modes stay aligned.
-- **Do** keep the poll action visually clear and the supporting privacy/context copy easy to read.
+- **Do** keep candidate identity, the poll action, and privacy/context copy easy to read.
+- **Do** keep sheet actions visible while their content scrolls.
 - **Do** preserve the wide results region and horizontal table overflow behavior.
 - **Do** use a visible focus treatment for keyboard-operated controls.
 

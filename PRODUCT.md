@@ -34,8 +34,8 @@ This is an open-link, nonofficial poll, not an official election or a verificati
 - Detailed responses are retained for 90 days after closing and then deleted. Final aggregates across all combinations are retained so public results remain available.
 - Application logs must not contain response contents, edit tokens, or cookies. Platform operational metadata may still be available.
 - Detailed public cross-tabulations, including cells with one vote, can make individual choices inferable; this was an accepted product decision.
-- Candidate data is static in source, one Markdown file per candidate. Frontmatter contains name, origin PW, and origin PD; the stable filename is the candidate ID, the body is an optional description, and filename prefixes determine ordering. Three candidate records are currently present; their descriptions are empty. Treat the source records as the current supplied list and do not invent additional candidates or descriptions.
-- The web interface supports submitting or revising a response, loading a prior response in the same browser, and viewing public candidate totals and filterable cross-tabulations. Results refresh periodically while the page is open.
+- Candidate data is static in source, one Markdown file per candidate. Frontmatter contains name, origin PW, origin PD, and an optional photo path; the stable filename is the candidate ID, and filename prefixes determine ordering. The body has Sinopsis, Visi, Misi, and Program unggulan sections. Five candidate records are currently present; their photos and profiles are empty and appear as placeholders. Do not invent candidate material.
+- The landing page presents candidate cards and profile sheets. A separate form sheet submits or revises a response; browsers with a saved response go to `/hasil` and can enter the edit flow there. Public results show a filterable chart and detailed cross-tabulation and refresh periodically while the page is open.
 - There is no admin interface for changing candidates, schedule, or categories.
 - Confirmed implementation stack: React, Vite, TypeScript, Hono, and Cloudflare Workers.
 - The upstream structure API requires a server-side authentication secret. No secret value is recorded in project documentation.
@@ -44,6 +44,7 @@ This is an open-link, nonofficial poll, not an official election or a verificati
 ## Evidence on Hand
 
 - Agreed product specification: `.scratch/polling-ketumum-pp-kammi/spec.md`.
+- Agreed interface flow: `.scratch/alur-pilih-calon/spec.md`.
 - Domain terminology: `CONTEXT.md`.
 - Decision on anonymous, editable responses and detailed public results: `docs/adr/0001-anonymous-editable-poll-responses.md`.
 - Candidate records currently in source: `src/data/candidates/`. No participant data or result data have been provided. Do not fabricate them.
