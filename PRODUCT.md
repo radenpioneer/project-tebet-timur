@@ -21,7 +21,7 @@ This is an open-link, nonofficial poll, not an official election or a verificati
 ## Operating Context
 
 - The poll opens when the application is available online and closes on 29 October 2026 at 23:59 WIB.
-- A response selects one candidate and requires PW, PD, cadre level (AB1, AB2, or AB3), and leadership position (Ketua, Sekretaris, Bendahara, Kaderisasi, Ketua Bidang, Ketua Departemen, or Staf Bidang).
+- A response selects one candidate and requires PW, PD, cadre level (AB1, AB2, or AB3), and leadership position/status (Ketua, Sekretaris, Bendahara, Kaderisasi, Ketua Bidang, Ketua Departemen, Staf Bidang, or Non Pengurus).
 - Participants may revise a response from the same browser until closing. Clearing browser data or using another browser or device can allow an additional response.
 - The public can view candidate totals and cross-tabulations across candidate, PW, PD, cadre level, and leadership position while the poll is open and after it closes. One-vote combinations remain visible; combinations without votes show an empty-data message.
 - PW and PD options come from the KAMMI structure API. PD choices depend on the selected PW. The agreed upstream cache duration is six hours; fallback to the last successful response is best-effort with the Workers Cache API, and submission is blocked if no successful list is available.

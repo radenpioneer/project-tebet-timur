@@ -30,4 +30,4 @@ Pilihan organisasi wilayah dan daerah kader yang mengisi polling; PD berada di b
 Tingkat kaderisasi AB1, AB2, atau AB3.
 
 **Posisi kepengurusan**:
-Peran yang diisi responden: Ketua, Sekretaris, Bendahara, Kaderisasi, Ketua Bidang, Ketua Departemen, atau Staf Bidang.
+Peran atau status yang diisi responden: Ketua, Sekretaris, Bendahara, Kaderisasi, Ketua Bidang, Ketua Departemen, Staf Bidang, atau Non Pengurus.

@@ -17,7 +17,7 @@ const VOTE_CLOSES_AT = Date.parse("2026-10-29T16:59:59.999Z");
 const EDIT_COOKIE = "poll_edit";
 const CADRE_LEVELS = ["AB1", "AB2", "AB3"] as const;
 const LEADERSHIP_POSITIONS = [
-	"Ketua", "Sekretaris", "Bendahara", "Kaderisasi", "Ketua Bidang", "Ketua Departemen", "Staf Bidang",
+	"Ketua", "Sekretaris", "Bendahara", "Kaderisasi", "Ketua Bidang", "Ketua Departemen", "Staf Bidang", "Non Pengurus",
 ] as const;
 
 type VoteInput = {

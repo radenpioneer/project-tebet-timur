@@ -24,7 +24,7 @@ type Vote = {
 
 const cadreLevels = ["AB1", "AB2", "AB3"];
 const leadershipPositions = [
-	"Ketua", "Sekretaris", "Bendahara", "Kaderisasi", "Ketua Bidang", "Ketua Departemen", "Staf Bidang",
+	"Ketua", "Sekretaris", "Bendahara", "Kaderisasi", "Ketua Bidang", "Ketua Departemen", "Staf Bidang", "Non Pengurus",
 ];
 
 async function loadOrganizations(query: URLSearchParams, signal: AbortSignal) {

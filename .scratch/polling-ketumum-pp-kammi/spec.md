@@ -11,7 +11,7 @@ Menyediakan polling aspirasi nonresmi tentang calon ketua umum PP KAMMI. Siapa p
 - Polling terbuka saat aplikasi tersedia online dan berakhir pada 29 Oktober 2026 pukul 23.59 WIB.
 - Setiap respons memilih satu calon dan wajib mengisi asal PW, asal PD, jenjang, serta posisi kepengurusan.
 - Daftar jenjang: AB1, AB2, AB3.
-- Daftar posisi: Ketua, Sekretaris, Bendahara, Kaderisasi, Ketua Bidang, Ketua Departemen, Staf Bidang.
+- Daftar posisi/status: Ketua, Sekretaris, Bendahara, Kaderisasi, Ketua Bidang, Ketua Departemen, Staf Bidang, Non Pengurus.
 - Pemilik browser dapat mengubah suaranya sampai polling ditutup.
 - Satu token membatasi satu suara per browser. Menghapus data browser atau menggunakan browser/perangkat berbeda dapat menghasilkan suara tambahan; sistem tidak memverifikasi satu suara per orang.
 - Polling tidak meminta identitas langsung, nomor identitas, nomor kontak, atau data pribadi lain.
